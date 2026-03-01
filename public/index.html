@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Loja Cash SAMP</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+body { font-family: Arial; background:#f4f6f9; margin:0;}
+header { background:#0d47a1; color:white; padding:20px; text-align:center;}
+.container { max-width:500px; margin:30px auto; background:white; padding:20px; border-radius:10px;}
+input, button { width:100%; padding:10px; margin:10px 0;}
+button { background:#0d47a1; color:white; border:none;}
+</style>
+</head>
+<body>
+
+<header>💙 Loja Oficial - Cash SAMP</header>
+
+<div class="container">
+<input id="id" placeholder="ID SAMP">
+<input id="email" placeholder="Email">
+<input id="quantidade" type="number" placeholder="Quantidade de Cash">
+
+<button onclick="comprar()">Comprar</button>
+
+<div id="resultado"></div>
+<div id="qrcode"></div>
+</div>
+
+<script>
+async function comprar() {
+    const id = document.getElementById("id").value;
+    const email = document.getElementById("email").value;
+    const quantidade = document.getElementById("quantidade").value;
+
+    const res = await fetch("/comprar", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({id,email,quantidade})
+    });
+
+    const data = await res.json();
+
+    if(data.sucesso){
+        document.getElementById("resultado").innerHTML =
+            "Valor: R$"+data.valor+"<br>Chave Pix: "+data.pix;
+
+        document.getElementById("qrcode").innerHTML="";
+        new QRCode(document.getElementById("qrcode"), data.pix);
+    }
+}
+</script>
+
+</body>
+</html>
