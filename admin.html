@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Painel Admin</title>
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:20px;}
+button{padding:5px 10px;}
+</style>
+</head>
+<body>
+
+<h2>Painel Admin</h2>
+<input type="password" id="senha" placeholder="Senha Admin">
+<button onclick="carregar()">Carregar Pedidos</button>
+
+<div id="lista"></div>
+
+<script>
+async function carregar(){
+    const res = await fetch("/pedidos");
+    const pedidos = await res.json();
+
+    let html="";
+    pedidos.forEach(p=>{
+        html+=`
+        <div>
+        #${p.numero} - ${p.idConta} - ${p.quantidade} Cash - ${p.status}
+        <button onclick="aprovar(${p.numero})">Aprovar</button>
+        </div><hr>`;
+    });
+
+    document.getElementById("lista").innerHTML=html;
+}
+
+async function aprovar(numero){
+    const senha=document.getElementById("senha").value;
+
+    await fetch("/aprovar",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({numero,senha})
+    });
+
+    carregar();
+}
+</script>
+
+</body>
+</html>
